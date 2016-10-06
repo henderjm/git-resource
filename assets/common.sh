@@ -10,8 +10,8 @@ load_pubkey() {
 
     eval $(ssh-agent) >/dev/null 2>&1
     trap "kill $SSH_AGENT_PID" 0
-
-    SSH_ASKPASS=$(dirname $0)/askpass.sh DISPLAY= ssh-add $private_key_path >/dev/null
+    echo "PASSPHRASE: " $(jq -r '.source.passphrase // ""' < $1)
+    SSH_ASKPASS=$(jq -r '.source.passphrase // ""' < $1) DISPLAY= ssh-add $private_key_path >/dev/null
 
     mkdir -p ~/.ssh
     cat > ~/.ssh/config <<EOF
